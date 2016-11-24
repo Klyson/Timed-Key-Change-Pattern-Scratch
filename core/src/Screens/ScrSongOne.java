@@ -28,7 +28,7 @@ public class ScrSongOne extends InputAdapter implements Screen {
     private Sprite sprite1, sprite2, sprite3, sprite4, spriteTL, spriteTR, spriteBL, spriteBR;
     private boolean S, p = true, isExit, k, t, pause = false, isKeyChange, isClick, isDone, bCount = true, jUp;
     private BitmapFont font;
-    private Circle circ;
+    private Circle circ;       //p is are done? boolean
     private Color TL, TR, BL, BR;
     ShapeRenderer shapeRenderer;
     private Rectangle recTL, recTR, recBL, recBR;
@@ -142,7 +142,7 @@ public class ScrSongOne extends InputAdapter implements Screen {
                     shapeRenderer.setColor(Color.BLACK);
                 }
             }
-            if (isClick) {
+            if (isClick && count != max) {
                 nCount++;
                 shapeRenderer.setColor(Color.WHITE);
                 if (nCount == 4) {
@@ -158,14 +158,10 @@ public class ScrSongOne extends InputAdapter implements Screen {
             font.draw(batch, "Press Enter to show end screen!", XMid - 50, 85);
             font.draw(batch, "Space to randomize colour location", XMid - 50, 55);
             batch.end();
-            if (!t) {
-                if (bCount) {
-                    count++;
-                }
-            } else if (t) {
-                count = 0;
+            if (bCount) {
+                count++;
             }
-            if (count == max) {
+            if (count == max && !isClick) {
                 if (!jUp) {
                     j++;
                     jUp = true;
@@ -219,19 +215,18 @@ public class ScrSongOne extends InputAdapter implements Screen {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         S = false;
         k = false;
-        bCount = true;
-        isClick = true;
         if (isDone && button == Buttons.RIGHT) {
             good = 0;
             eff = 0;
             j = 0;
             count = 0;
             isDone = !isDone;
+            p = true;
         } else if (isDone && button == Buttons.LEFT) {
             count = 0;
             isDone = !isDone;
+            p = true;
         }
-        count = 0;
         if (p) {
             if (button == Buttons.LEFT && recTL.contains(screenX, screenY)
                     && randRec.get(x) == recBL && !circ.contains(screenX, screenY)) {
@@ -249,16 +244,18 @@ public class ScrSongOne extends InputAdapter implements Screen {
             if (!circ.contains(screenX, screenY)) {
                 k = true;
             }
-            if (S && k) {
+            if (k) {
+                bCount = true;
+                x = ThreadLocalRandom.current().nextInt(0, 3 + 1);
+                isClick = true;
+                count = 0;
                 j++;
-                good++;
                 eff = (good / j) * 100;
-            } else if (!S && k) {
-                j++;
-                eff = (good / j) * 100;
+                if (S) {
+                    good++;
+                }
             }
         }
-        x = ThreadLocalRandom.current().nextInt(0, 3 + 1);
         return true;
     }
 
