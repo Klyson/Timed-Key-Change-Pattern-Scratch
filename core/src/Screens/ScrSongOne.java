@@ -26,14 +26,14 @@ public class ScrSongOne extends InputAdapter implements Screen {
     private SpriteBatch batch;
     private Texture img1, img2, img3, img4;
     private Sprite sprite1, sprite2, sprite3, sprite4, spriteTL, spriteTR, spriteBL, spriteBR;
-    private boolean S, p = true, isExit, k, t, pause = false, isDone, isKeyChange;
+    private boolean S, p = true, isExit, k, t, pause = false, isKeyChange, isClick, isDone, bCount = true, jUp;
     private BitmapFont font;
     private Circle circ;
     private Color TL, TR, BL, BR;
     ShapeRenderer shapeRenderer;
     private Rectangle recTL, recTR, recBL, recBR;
     float XMid, YMid, good = 0, eff = 0, _good, _eff;
-    int j = 0, count = 0, max = 150, nWhere = 0, nCount = 0, x;
+    int j = 0, count = 0, max = 90, nWhere = 0, nCount = 0, x;
     ArrayList<Rectangle> randRec = new ArrayList();
     int ars[] = null; //0 = TL, 1 = TR, 2 = BL, 3 = BR. 
 
@@ -98,6 +98,9 @@ public class ScrSongOne extends InputAdapter implements Screen {
             sprite2.draw(batch);
             sprite3.draw(batch);
             sprite4.draw(batch);
+            if (isExit) {
+                Gdx.app.exit();
+            }
             if (randRec.get(x) == recTL) {
                 if (x == 0) {
                     shapeRenderer.setColor(Color.RED);
@@ -139,31 +142,46 @@ public class ScrSongOne extends InputAdapter implements Screen {
                     shapeRenderer.setColor(Color.BLACK);
                 }
             }
-//            if (j < 5) {
-//                max = 150;
-//            } else if (j >= 5 && j < 9) {
-//                max = 100;
-//            } else if (j >= 9 && j < 13) {
-//                max = 71;
-//            } else {
-//                max = 43;
-//            }
+            if (isClick) {
+                nCount++;
+                shapeRenderer.setColor(Color.WHITE);
+                if (nCount == 4) {
+                    nCount = 0;
+                    isClick = false;
+                }
+            }
             font.draw(batch, String.valueOf(j), 200, YMid * 2);
             font.draw(batch, String.valueOf(good), 250, YMid * 2);
             font.draw(batch, String.valueOf(eff) + "%", 300, YMid * 2);
             font.draw(batch, String.valueOf(count) + " / " + String.valueOf(max), 425, YMid * 2);
+            font.draw(batch, "Escape to exit", XMid - 50, 30);
+            font.draw(batch, "Press Enter to show end screen!", XMid - 50, 85);
+            font.draw(batch, "Space to randomize colour location", XMid - 50, 55);
             batch.end();
+            if (!t) {
+                if (bCount) {
+                    count++;
+                }
+            } else if (t) {
+                count = 0;
+            }
+            if (count == max) {
+                if (!jUp) {
+                    j++;
+                    jUp = true;
+                }
+                bCount = false;
+                nCount++;
+                shapeRenderer.setColor(Color.WHITE);
+                if (nCount == 4) {
+                    count = 0;
+                    nCount = 0;
+                    jUp = false;
+                    bCount = true;
+                }
+            }
             shapeRenderer.circle(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 150);
             shapeRenderer.end();
-//            if (!t) {
-//                count++;
-//            } else if (t) {
-//                count = 0;
-//            }
-//            if (count == max) {
-//                count = 0;
-//                j++;
-//            }
             isKeyChange = false;
         } else {
             Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -172,6 +190,8 @@ public class ScrSongOne extends InputAdapter implements Screen {
             font.draw(batch, "You clicked correctly " + String.valueOf(good) + " times out of " + String.valueOf(j), 250, YMid + 100);
             font.draw(batch, "Your efficiency was " + String.valueOf(eff) + "%", 250, YMid);
             font.draw(batch, "Press Escape to Exit", 250, YMid - 200);
+            font.draw(batch, "Left Click to Continue", 250, YMid - 150);
+            font.draw(batch, "Right Click to Restart", 250, YMid - 100);
             batch.end();
             if (isExit) {
                 Gdx.app.exit();
@@ -199,6 +219,19 @@ public class ScrSongOne extends InputAdapter implements Screen {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         S = false;
         k = false;
+        bCount = true;
+        isClick = true;
+        if (isDone && button == Buttons.RIGHT) {
+            good = 0;
+            eff = 0;
+            j = 0;
+            count = 0;
+            isDone = !isDone;
+        } else if (isDone && button == Buttons.LEFT) {
+            count = 0;
+            isDone = !isDone;
+        }
+        count = 0;
         if (p) {
             if (button == Buttons.LEFT && recTL.contains(screenX, screenY)
                     && randRec.get(x) == recBL && !circ.contains(screenX, screenY)) {
