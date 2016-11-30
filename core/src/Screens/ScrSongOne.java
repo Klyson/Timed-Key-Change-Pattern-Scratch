@@ -23,17 +23,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ScrSongOne extends InputAdapter implements Screen {
 
     GamGame1 game;
+    ScrMainMenu mainmenu;
     private SpriteBatch batch;
     private Texture img1, img2, img3, img4;
     private Sprite sprite1, sprite2, sprite3, sprite4, spriteTL, spriteTR, spriteBL, spriteBR;
-    private boolean S, p = true, isExit, k, t, pause = false, isKeyChange, isClick, isDone, bCount = true, jUp;
+    private boolean S, p = true, isExit, k, t, pause = false, isKeyChange, isClick, isDone, bCount = true, jUp, isrand;
     private BitmapFont font;
-    private Circle circ;       //p is are done? boolean
+    private Circle circ;
     private Color TL, TR, BL, BR;
     ShapeRenderer shapeRenderer;
     private Rectangle recTL, recTR, recBL, recBR;
     float XMid, YMid, good = 0, eff = 0, _good, _eff;
-    int j = 0, count = 0, max = 90, nWhere = 0, nCount = 0, x;
+    int j = 0, count = 0, max = 90, nWhere = 0, nCount = 0, x, g = 0, rand = 10;
     ArrayList<Rectangle> randRec = new ArrayList();
     int ars[] = null; //0 = TL, 1 = TR, 2 = BL, 3 = BR. 
 
@@ -85,7 +86,21 @@ public class ScrSongOne extends InputAdapter implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if (!isDone) {
-            if (isKeyChange) {
+            if ((rand - 30) >= g) {
+                font.setColor(Color.WHITE);
+            } else {
+                font.setColor(Color.RED);
+            }
+            g++;
+            System.out.println(g);
+            if (!isrand) {
+                rand = ThreadLocalRandom.current().nextInt(100, 300 + 1);
+                isrand = true;
+            }
+            System.out.println(rand);
+            if (g == rand) {
+                g = 0;
+                isrand = false;
                 Collections.shuffle(randRec);
                 sprite1.setPosition(randRec.get(0).x, randRec.get(0).y); //S1 = 0
                 sprite2.setPosition(randRec.get(1).x, randRec.get(1).y); //S2 = 1
@@ -164,6 +179,7 @@ public class ScrSongOne extends InputAdapter implements Screen {
             if (count == max && !isClick) {
                 if (!jUp) {
                     j++;
+                    x = ThreadLocalRandom.current().nextInt(0, 3 + 1);
                     jUp = true;
                 }
                 bCount = false;
@@ -180,6 +196,7 @@ public class ScrSongOne extends InputAdapter implements Screen {
             shapeRenderer.end();
             isKeyChange = false;
         } else {
+            font.setColor(Color.WHITE);
             Gdx.gl.glClearColor(0, 0, 0, 1);
             p = false;
             batch.begin();
@@ -263,8 +280,6 @@ public class ScrSongOne extends InputAdapter implements Screen {
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE) {
             isExit = true;
-        } else if (keycode == Input.Keys.SPACE) {
-            isKeyChange = true;
         } else if (keycode == Input.Keys.ENTER) {
             isDone = true;
         }

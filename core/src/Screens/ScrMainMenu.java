@@ -16,7 +16,7 @@ public class ScrMainMenu extends InputAdapter implements Screen {
     private SpriteBatch batch;
     private boolean isSong, isExit;
     private BitmapFont font;
-    private String SongChoice = "Song One";
+    private String SongChoice = "Song One", Text;
 
     public ScrMainMenu(GamGame1 _game) {
         game = _game;
@@ -35,21 +35,12 @@ public class ScrMainMenu extends InputAdapter implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        font.draw(batch, "Press Enter to Play Selected Song", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        //Replace Me!
+        font.draw(batch, "Press Enter to Play!", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         font.draw(batch, "Press Escape to Exit", Gdx.graphics.getWidth() / 2, 375);
-        font.draw(batch, "Press 1 to select Song One", Gdx.graphics.getWidth() / 2, 150);
-        font.draw(batch, SongChoice, Gdx.graphics.getWidth() / 2, 200);
         batch.end();
-        if (isSong && SongChoice.equals("Song One")) {
+        if (isSong) {
             game.nScreen = 1;
-            game.updateState();
-            dispose();
-        } else if (isSong && SongChoice.equals("Song Two")) {
-            game.nScreen = 3;
-            game.updateState();
-            dispose();
-        } else if (isSong && SongChoice.equals("Song Three")) {
-            game.nScreen = 4;
             game.updateState();
             dispose();
         } else if (isExit) {
@@ -84,13 +75,8 @@ public class ScrMainMenu extends InputAdapter implements Screen {
             isSong = true;
         } else if (keycode == Input.Keys.ESCAPE) {
             isExit = true;
-        } else if (keycode == Input.Keys.NUM_1 || keycode == Input.Keys.NUMPAD_1) {
-            SongChoice = "Song One";
-        } else if (keycode == Input.Keys.NUM_2 || keycode == Input.Keys.NUMPAD_2) {
-            SongChoice = "Song Two";
-        } else if (keycode == Input.Keys.NUM_3 || keycode == Input.Keys.NUMPAD_3) {
-            SongChoice = "Song Three";
         }
         return false;
     }
+
 }
